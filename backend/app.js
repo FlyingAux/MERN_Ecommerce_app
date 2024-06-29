@@ -5,9 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
 const db = require('./config/mongoose-connection');
+const expressSession = require('express-session');
+require('dotenv').config();
+console.log('Environment:', process.env.NODE_ENV);
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+
 
 var app = express();
 
@@ -17,10 +21,16 @@ app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+
+app.use(expressSession({
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.EXPRESS_SESSION_SECRET
+}))
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
