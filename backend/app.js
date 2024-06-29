@@ -10,7 +10,7 @@ require('dotenv').config();
 console.log('Environment:', process.env.NODE_ENV);
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+
 
 const flash = require('connect-flash');
 
@@ -36,7 +36,8 @@ app.use(expressSession({
 }))
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
