@@ -12,6 +12,8 @@ console.log('Environment:', process.env.NODE_ENV);
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+const flash = require('connect-flash');
+
 
 var app = express();
 
@@ -25,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+app.use(flash());
 
 app.use(expressSession({
   resave: false,

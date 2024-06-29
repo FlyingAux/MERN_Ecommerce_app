@@ -58,3 +58,10 @@ module.exports.logout = function(req,res,nex){
     res.cookie('token','');
     res.redirect('/');
 };
+
+module.exports.getUser = async (req,res,next)=>{
+    let user = await userModel.findById(req.user.id).select('-password')
+
+    if(!user) return res.status(400).json({msg: "user not found"})
+        res.json(user)
+}
