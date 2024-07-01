@@ -10,6 +10,7 @@ require('dotenv').config();
 console.log('Environment:', process.env.NODE_ENV);
 
 var indexRouter = require('./routes/index');
+var categoryRouter = require('./routes/category');
 
 
 const flash = require('connect-flash');
@@ -36,6 +37,8 @@ app.use(expressSession({
 }))
 
 app.use('/', indexRouter);
+app.use('/category', categoryRouter);
+
 
 
 
@@ -54,5 +57,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 
 module.exports = app;

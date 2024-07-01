@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const generateToken = require('../utils/generateToken');
 
-module.exports.registerUser =async function(req,res,next){
+module.exports.registerUser = async function(req,res,next){
     try{
         let {email, fullname, password,role} = req.body;
 

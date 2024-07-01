@@ -1,14 +1,18 @@
 const userModel = require('../models/userModel');
 
-module.exports.isAdmin = async(req,res,next)=>{
+module.exports = async(req,res,next)=>{
     try{
         const user = await userModel.findOne({
             _id: req.user._id
         })
-        if(user.role === 0)
+        console.log(user)
+        if(user.role != 1){
             return res.status(400).json({msg: 'Admin resource access Denied'});
+        }
+        else{
+            next()
+        }
         
-        next();
     }
     catch(err){
         return res.status(500).json({msg: err.message})
