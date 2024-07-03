@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
 const db = require('./config/mongoose-connection');
-const expressSession = require('express-session');
 require('dotenv').config();
 console.log('Environment:', process.env.NODE_ENV);
 
@@ -30,13 +29,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 app.use(flash());
 
-app.use(expressSession({
-  resave: false,
-  saveUninitialized: false,
-  secret: process.env.EXPRESS_SESSION_SECRET
-}))
 
-app.use('/', indexRouter);
+app.use('/user', indexRouter);
 app.use('/category', categoryRouter);
 
 

@@ -4,64 +4,99 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const generateToken = require('../utils/generateToken');
+const createrefreshToken = require('../utils/refreshToken');
 
 module.exports.registerUser = async function(req,res,next){
     try{
-        let {email, fullname, password,role} = req.body;
+        const { fullname, email, password } = req.body;
+        const user = await userModel.findOne({email});
+        if(user) return res.status(400).json({msg: "Email already registerd please login"});
+         if(password.length < 6) return res.status(400).json({msg: "password should be altest of 6 chracters"});
 
-        let user = await userModel.findOne({email: email});
-        if(user) return res.status(401).send('you already have a account. Please Login')
+        const pass = await bcrypt.hash(password, 10)
 
-        bcrypt.genSalt(10,function(err,salt){
-            bcrypt.hash(password,salt,async function(err,hash){
-                if(err) return res.send(err.message);
-                else{
-                    let newUser = await userModel.create({
-                        fullname,
-                        email,
-                        password: hash,
-                        role
-                      });
-                      
-                    let token = generateToken(newUser);
-                    res.cookie("token",token);
-                    res.send("user Created");
-                }
-            });
-        });
+         const newUser = new userModel({fullname, email, password: pass});
+         await newUser.save();
+
+         const accessToken = generateToken({id: newUser._id})
+         const refreshToken = createrefreshToken({id: newUser._id});
+
+         res.cookie('refreshToken', refreshToken,{
+            httpOnly: true,
+            path: '/user/rt'
+         });
+
+         res.json({accessToken,refreshToken});
     }
     catch(err){
-       res.send(err.message);
+        res.status(500).json({msg: err.message})
     }
 }
 
-module.exports.loginUser = async function(req,res){
-    let {email ,password} = req.body;
-    let user = await userModel.findOne({email: email});
-        if(!user) return res.status(401).send('Email or password is incorrect')
-            
-            bcrypt.compare(password, user.password, function(err,result){
-               if(result === true){
-                let token = generateToken(user);
-                res.cookie('token',token);
-                res.redirect('/');
-               }
-               else{
-               req.flash('error','Email or password is incorrect');
-               res.redirect('/')
-               }
-            })
+module.exports.rfToken = async function(req,res,next){
+    try{
+        const reftoken = req.cookies.refreshToken;
+        console.log(reftoken)
+
+        if(!reftoken) return res.status(400).json({msg: "please login or registers"});
+    
+        jwt.verify(reftoken,process.env.REFRESH_TOKEN_SECRET,function(err,user){
+            if(err) return res.status(400).json({msg: 'verify issue'})
+                const accessToken = generateToken({id: user.id})
+            res.json({user,accessToken})
+        })
+    }
+    catch(err){
+        return res.status(500).json({msg: err.message});
+    }
 }
 
 
-module.exports.logout = function(req,res,nex){
-    res.cookie('token','');
-    res.redirect('/');
+module.exports.loginUser = async function(req,res,next){
+    try{
+        const { email, password } = req.body;
+        const user = await userModel.findOne({email})
+        if(!user) return res.status(400).json({msg: "user does not exists"})
+
+        const isMatch = await bcrypt.compare(password,user.password)
+        if(!isMatch) return res.status(400).json({msg: "Incorrect Password"})
+            
+        const accessToken = generateToken({id: user._id})
+        const refreshToken = createrefreshToken({id: user._id})
+        
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            path: '/user/rt'
+        })
+
+
+        res.json({accessToken})
+    }
+    catch(err){
+        return res.status(400).json({msg: err.message});
+    }
+}
+
+module.exports.logout = function(req,res,next){
+   try{
+    res.clearCookie('refreshToken', {path:'/user/rt'});
+    return res.json({msg: "Logged out"});
+   }
+   catch(err){
+    return res.status(500).json({msg: err.message})
+   }
 };
 
-module.exports.getUser = async (req,res,next)=>{
-    let user = await userModel.findById(req.user.id).select('-password')
 
-    if(!user) return res.status(400).json({msg: "user not found"})
-        res.json(user)
+module.exports.getUser = async (req,res,next)=>{
+    try{
+        const user = await userModel.findById(req.user.id)
+        console.log(req.user.id)
+
+        if(!user) return res.status(400).json({msg: "User not found"})
+            res.json(user)
+    }
+    catch(err){
+        return res.status(400).json({msg: err.message})
+    }
 }

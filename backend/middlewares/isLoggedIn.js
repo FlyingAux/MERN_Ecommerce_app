@@ -1,20 +1,21 @@
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
-module.exports = async function(req,res,next){
-    if(!req.cookies.token){
-        req.flash('Error', "you need to login first");
-        return res.redirect('/');
-    }
-
+module.exports = async function (req, res, next) {
     try{
-        let decoded = jwt.verify(req.cookies.token,process.env.JWT_KEY);
-        let user = await userModel.findOne({email: decoded.email}).select("-password");
-        req.user = user;
-        next();
-    }
+        const token = req.header("Authorization")
+
+        if(!token) return res.status(400).json({msg: "Invalid Authorization"})
+
+            jwt.verify(token,process.env.JWT_KEY,(err,user)=>{
+                if(err) return res.status(400).json({msg: "Invalid"})
+
+                    req.user = user
+                    console.log(user)
+                    next();
+            })
+    }   
     catch(err){
-        req.flash('error',"something went wrong.");     
-        res.redirect('/');
+        return res.status(500).json({msg: err.message});
     }
 };

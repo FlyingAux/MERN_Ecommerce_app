@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const generateToken = function(newUser){
-   return jwt.sign({email: newUser.email, id: newUser._id},process.env.JWT_KEY);
+const generateToke = function(newUser){
+   console.log(newUser)
+   return jwt.sign(newUser,process.env.JWT_KEY,{expiresIn: '1d'});
 }
-module.exports = generateToken;
+module.exports = generateToke;

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, logout, getUser } = require('../controllers/authController');
+const { registerUser, loginUser, logout, getUser, rfToken } = require('../controllers/authController');
 const isLoggedIn = require('../middlewares/isLoggedIn');
 
 router.get('/',function(req,res){
@@ -9,11 +9,14 @@ router.get('/',function(req,res){
 
 router.post('/register', registerUser);
 
+router.post('/rt', rfToken);
+
 router.post('/login', loginUser);
 
 router.get('/logout', logout);
 
-router.get('/user',isLoggedIn,getUser)
+router.get('/info',isLoggedIn, getUser);
+
 
 
 module.exports = router;
