@@ -17,11 +17,13 @@ module.exports.getCategory = async function(req,res,next){
 
 module.exports.createCategory = async function(req,res,next){
     try{
-        const {name} = req.body
+        const { name } = req.body;
         const category = await catModel.findOne({name})
         if(category) return res.status(400).json({msg: "category already exists"})
 
             const newCategory = new catModel({name});
+
+            await newCategory.save();
 
         res.send('category created')
     }
@@ -30,6 +32,26 @@ module.exports.createCategory = async function(req,res,next){
     }
 }
 
-module.exports.createCategory = function(req,res,next){
 
+module.exports.deleteCategory = async function(req,res,next){
+    try{
+        let cat = await catModel.findByIdAndDelete(req.params.id)
+        res.json({msg: "category deleted"})
+    }
+    catch(err){
+        return res.status(500).json({msg: err.message})
+    }
+}
+
+
+module.exports.updateCategory = async function(req,res,next){
+    try{
+        const { name } = req.body;
+        await catModel.findByIdAndUpdate({_id: req.params.id},{name})
+
+        res.json("updated")
+    }
+    catch(err){
+        return res.status(500).json({msg: err.message})
+    }
 }

@@ -90,7 +90,7 @@ module.exports.logout = function(req,res,next){
 
 module.exports.getUser = async (req,res,next)=>{
     try{
-        const user = await userModel.findById(req.user.id)
+        const user = await userModel.findById(req.user.id).select("-password");
         console.log(req.user.id)
 
         if(!user) return res.status(400).json({msg: "User not found"})
