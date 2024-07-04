@@ -10,7 +10,7 @@ console.log('Environment:', process.env.NODE_ENV);
 
 var indexRouter = require('./routes/index');
 var categoryRouter = require('./routes/category');
-
+var productRouter = require('./routes/product');
 
 const flash = require('connect-flash');
 
@@ -32,7 +32,7 @@ app.use(flash());
 
 app.use('/user', indexRouter);
 app.use('/category', categoryRouter);
-
+app.use('/product', productRouter);
 
 
 
