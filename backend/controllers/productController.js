@@ -5,10 +5,63 @@ const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const generateToken = require('../utils/generateToken');
 
+
+
+class APIfeatures{
+    constructor(query,queryString){
+        this.query = query,
+        this.queryString = queryString
+    }
+
+    filtering(){
+        const queryObj = {...this.queryString}
+        const excludedFields = ['page','sort','limit'];
+        excludedFields.forEach(function(el){
+            delete queryObj[el];
+        })
+
+        let querystr = JSON.stringify(queryObj)
+        querystr = querystr.replace(/\b(gte|gt|lt|lte|regex)\b/g, match => '$' + match)
+
+        this.query.find(JSON.parse(querystr))
+
+        return this
+    }
+
+    sorting(){
+        if(this.queryString.sort){
+            const sortBy = this.queryString.sort.split(',').join('')
+            this.query.sort(sortBy)
+
+            console.log(sortBy)
+        }
+        else{
+            this.query = this.query.sort('-createdAt')
+        }
+        return this
+    }
+
+    pagination(){
+        const page = this.queryString.page * 1 || 1;
+
+        const limit = this.queryString.limit * 1 || 9;
+
+        const skip = (page-1) * limit;
+
+        this.query = this.query.skip(skip).limit(limit);
+
+        return this;
+    }
+}
+
+
+
 module.exports.getProduct = async function(req,res,next){
     try{
-        const products = await productModel.find();
-        res.json(products);
+        console.log(req.query)
+        const features = new APIfeatures(productModel.find(),req.query).filtering().sorting().pagination();
+        const products = await features.query
+        res.json({result: products.length});
     }
     catch(err){
         res.status(500).json({msg: err.message})
