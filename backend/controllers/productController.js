@@ -58,10 +58,10 @@ class APIfeatures{
 
 module.exports.getProduct = async function(req,res,next){
     try{
-        console.log(req.query)
         const features = new APIfeatures(productModel.find(),req.query).filtering().sorting().pagination();
         const products = await features.query
-        res.json({result: products.length});
+        res.json({products});
+        // res.json({result: products.length});
     }
     catch(err){
         res.status(500).json({msg: err.message})
