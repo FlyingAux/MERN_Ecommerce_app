@@ -22,7 +22,8 @@ const Page = () => {
     <>
       <Header />
       <div className=''>Products</div>
-      <ul>
+      
+      <ul className='flex gap-3 flex-nowrap flex-shrink-0 h-screen w-full'>
         {products.length > 0 ? (
           products.map((product) => (
             <ProductaList key={product.id} product={product} />
@@ -31,6 +32,7 @@ const Page = () => {
           <li>No products available</li>
         )}
       </ul>
+    
       <Footer />
     </>
   );
