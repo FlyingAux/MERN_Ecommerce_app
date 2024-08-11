@@ -21,9 +21,9 @@ const Page = () => {
   return (
     <>
       <Header />
-      <div className=''>Products</div>
+      {/* <div className=''>Products</div> */}
       
-      <ul className='flex gap-3 flex-nowrap flex-shrink-0 h-screen w-full'>
+      <ul className='flex gap-8 flex-wrap flex-shrink-0 w-full justify-center py-10 leading-none'>
         {products.length > 0 ? (
           products.map((product) => (
             <ProductaList key={product.id} product={product} />

@@ -9,10 +9,11 @@ const page = () => {
   return (
     
     <>
-
+   
       <Header/>
         <h1 className='text-3xl'>Main</h1>
       <Footer/>
+
     </>
 
   )
