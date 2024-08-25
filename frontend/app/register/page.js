@@ -8,6 +8,7 @@ import Footer from '../Components/partials/footer';
 const page = () => {
 
   const [user, setUser] = useState({
+    fullname: '',
     email:'',
     password: ''
   })  
@@ -17,10 +18,10 @@ const page = () => {
     setUser({...user, [name]:value})
   }
   
-  const loginSubmit = async e => {
+  const registerSubmit = async e => {
     e.preventDefault()
     try{
-      await axios.post('http://localhost:8000/user/login',{...user},console.log('Login success'))
+      await axios.post('http://localhost:8000/user/register',{...user},console.log('Login success'))
 
       localStorage.setItem('firstLogin',true)
 
@@ -39,7 +40,19 @@ const page = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Login to Your Account</h2>
-        <form onSubmit={loginSubmit}>
+        <form onSubmit={registerSubmit}>
+        <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email"> Name </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="name"
+              type="text"
+              name='fullname'
+              value={user.fullname}
+              placeholder="Enter your name"
+              onChange={onChangeInput}
+            />
+          </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email"> Email </label>
             <input
@@ -71,11 +84,12 @@ const page = () => {
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Login In
+              Register
             </button>
+            <h1 className='font-bold text-xl'> OR </h1>
             <Link
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              href="/register"> Register </Link>
+              href="/login"> Login </Link>
           </div>
         </form>
       </div>
