@@ -3,12 +3,14 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import useProductApi from './api/productApi'; // Assuming this hook fetches products
+import userApi from './api/userApi';
 
 export const GlobalState = createContext();
 
 export const DataProvider = ({ children }) => {
   const [token, setToken] = useState(false); // Corrected `flase` typo to `false`
   const [products, setProducts] = useProductApi();
+  const { isLogged, isAdmin } = userApi(token);
 
   // Function to refresh the token
   const refreshToken = async () => {
@@ -41,9 +43,9 @@ export const DataProvider = ({ children }) => {
   // Consolidating all state values into `state` object
   const state = {
     token: [token, setToken],
-    productApi: { products, setProducts }
-  };
-
+    productApi: { products, setProducts },
+    userApi: { isLogged, isAdmin }
+    };
 
   return (
     <GlobalState.Provider value={state}>
