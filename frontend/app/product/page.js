@@ -12,7 +12,11 @@ const Page = () => {
     return <div>Loading...</div>; // Add a loading state or handle errors as needed
   }
 
+  const [token] = state.token;
   const { products } = state.productApi;
+
+  console.log("Token:", token);
+  console.log('Product:', products)
 
   if (!products) {
     return <div>Loading products...</div>; // Handle cases where products is undefined

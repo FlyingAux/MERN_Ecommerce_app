@@ -2,28 +2,20 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
 module.exports = async function (req, res, next) {
-    try {
-        // Extract token from Authorization header
-        const authHeader = req.header("Authorization");
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(400).json({ msg: "Invalid Authorization header" });
-        }
+    try{
+        const token = req.header("Authorization")
 
-        const token = authHeader.split(' ')[1]; // Extract token part after 'Bearer'
+        if(!token) return res.status(400).json({msg: "Invalid Authorization"})
 
-        // Verify the token
-        jwt.verify(token, process.env.JWT_KEY, (err, user) => {
-            if (err) {
-                console.error('Token verification error:', err.message);
-                return res.status(400).json({ msg: "Invalid token" });
-            }
+            jwt.verify(token,process.env.JWT_KEY,(err,user)=>{
+                if(err) return res.status(400).json({msg: "Invalid"})
 
-            req.user = user; // Attach user data to req
-            console.log('Verified User:', user); // Debugging line
-            next(); // Proceed to the next middleware or route handler
-        });
-    } catch (err) {
-        console.error('Middleware error:', err.message);
-        return res.status(500).json({ msg: err.message });
+                    req.user = user
+                    console.log(user)
+                    next();
+            })
+    }   
+    catch(err){
+        return res.status(500).json({msg: err.message});
     }
 };

@@ -1,18 +1,16 @@
 'use client'
-import React, { useState } from 'react'
-import Link from 'next/link'
+import React, { useState } from 'react';
 import axios from 'axios';
 import Header from '../Components/partials/header';
 import Footer from '../Components/partials/footer';
-import { useRouter } from 'next/navigation'; // Use `next/navigation` for programmatic navigation
+import Link from 'next/link';
 
 const Page = () => {
   const [user, setUser] = useState({
     email: '',
     password: ''
   });
-
-  const router = useRouter(); // Initialize router for navigation
+  const [token, setToken] = useState(null); // Define setToken here
 
   const onChangeInput = e => {
     const { name, value } = e.target;
@@ -22,12 +20,14 @@ const Page = () => {
   const loginSubmit = async e => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8000/user/login', user);
-      localStorage.setItem('firstLogin', 'true'); // Ensure the value is a string
-      router.push('/product'); // Use router.push for navigation
+      const response = await axios.post('http://localhost:8000/user/login', { ...user }, { withCredentials: true });
+      console.log("Response:", response);
+      setToken(response.data.accessToken); // Ensure setToken is available here
+      localStorage.setItem('firstLogin', true);
+      window.location.href = "/product";
     } catch (err) {
-      console.error('Login error:', err); // Log the error for debugging
-      alert(err.response?.data?.msg || 'An error occurred'); // Optional: Fallback message if error response is not available
+      console.error("Error:", err);
+      alert(err.response?.data?.msg || "An error occurred");
     }
   };
 
@@ -51,9 +51,7 @@ const Page = () => {
               />
             </div>
             <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                Password
-              </label>
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password"> Password </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                 id="password"
@@ -69,7 +67,7 @@ const Page = () => {
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="submit"
               >
-                Login
+                Login In
               </button>
               <Link
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

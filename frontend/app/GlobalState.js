@@ -34,6 +34,7 @@ export const DataProvider = ({ children }) => {
   // Effect to call refreshToken when the component mounts
   useEffect(() => {
     const firstLogin = localStorage.getItem('firstLogin')
+    console.log("Local Storage Token:", localStorage.getItem('firstLogin'));
     if(firstLogin) refreshToken(); // Call token refresh on component mount
   }, []); // Empty dependency array ensures it runs once after mount
 

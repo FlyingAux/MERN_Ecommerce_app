@@ -13,10 +13,10 @@ const userApi = (token) => {
                         headers: { Authorization: token },
                     });
 
-                    if (res.data) {
                         setIsLogged(true);
-                        setIsAdmin(res.data.isAdmin); // Assuming your API response has an `isAdmin` field
-                    }
+                        res.data.role === 1 ? setIsAdmin(true) : setIsAdmin(false)
+                        console.log('userApi',res) 
+                    
                 } catch (err) {
                     alert(err.response?.data?.msg || "An error occurred");
                 }
