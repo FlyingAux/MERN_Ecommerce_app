@@ -13,12 +13,22 @@ export const DataProvider = ({ children }) => {
   // Function to refresh the token
   const refreshToken = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/user/rt');
-      setToken(response.data.accessToken); // Assuming `token` is returned in `response.data`
-      
-    } catch (error) {
-      console.error("Failed to refresh token", error);
+      const response = await axios.post('http://localhost:8000/user/rt', {}, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        withCredentials: true // Ensure cookies are sent with request
+    });
+
+    if (response.data.accessToken) {
+        setToken(response.data.accessToken); // Update token
+        console.log('Token refreshed successfully:', response.data.accessToken);
+    } else {
+        console.error('No access token returned');
     }
+} catch (error) {
+    console.error("Failed to refresh token", error.response ? error.response.data : error.message);
+}
   };
 
   // Effect to call refreshToken when the component mounts
@@ -40,24 +50,5 @@ export const DataProvider = ({ children }) => {
     </GlobalState.Provider>
   );
 };
-
-
-// 'use client'
-// import React, { createContext } from 'react';
-// import useProductApi from './api/productApi';
-
-// export const GlobalState = createContext();
-
-// export const DataProvider = ({ children }) => {
-//   const [products, setProducts] = useProductApi();
-
-//   return (
-//     <GlobalState.Provider value={{ productApi: { products, setProducts } }}>
-//       {children}
-//     </GlobalState.Provider>
-//   );
-// };
-
-
 
 

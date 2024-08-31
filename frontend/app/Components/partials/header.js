@@ -1,11 +1,16 @@
 'use client'
-import React from 'react'
+import React, { useContext } from 'react'
 import Link from 'next/link';
 import { RiMenu2Fill } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
 import { IoCartOutline } from "react-icons/io5";
+import { GlobalState } from '@/app/GlobalState';
 
 const header = () => {
+
+    const state = useContext(GlobalState)
+    console.log(state)
+
   return (
     <>
        <div className='px-2'>
