@@ -1,15 +1,28 @@
 'use client'
 import Link from 'next/link';
 import React from 'react';
+import { useContext } from 'react';
+import { GlobalState } from '@/app/GlobalState';
+import userApi from '@/app/api/userApi';
+import BtnRender from './btnRender';
 
-const ProductaList = ({ product }) => {
+
+const ProductaList = ({ product, isAdmin }) => {
+
+  const state = useContext(GlobalState);
+  const { products } = state.productApi;
+  const addCart = state.userApi.addCart
+  // const [isAdmin] = state.userApi.isAdmin
   // console.log(product);
   return (
    
      
         <>
          {product && (
-        <div className='ProductCard h-96 w-80 p-3 border-2 border-black rounded-xl bg-zinc-200'>
+        <div className='ProductCard h-fit w-80 p-3 border-2 border-black rounded-xl bg-zinc-200'>
+          {
+            isAdmin && <input type='checkbox' checked={product.checked}/>
+          }
           <div className='img_Cont h-64 w-full border-[1.8px] border-black overflow-hidden'>
             <img className='h-full w-full object-cover' src='https://conceptboard.com/wp-content/uploads/Product-Development-01-01.png' alt='Loading'/>
           </div>
@@ -19,10 +32,8 @@ const ProductaList = ({ product }) => {
             <h1 className='font-bold'>${product.price}</h1>
           </div>
           <br/>
-          <div className='button_cont h-8 w-full flex items-center justify-between'>
-            <Link className='font-semibold border-2 border-black rounded-md px-3 py-2' id='btn_buy' href={`#!`}> Buy Now </Link>
-            <Link className='font-semibold border-2 border-black rounded-md px-3 py-2' id='view_btn' href={`details/${product._id}`}> View </Link>
-          </div>
+
+            <BtnRender product={product}/>
           </div>
              )}
         </>

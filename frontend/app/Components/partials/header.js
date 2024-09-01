@@ -13,6 +13,7 @@ const header = () => {
     const state = useContext(GlobalState)
     const [ isLogged, setIsLogged ] = state.userApi.isLogged
     const [ isAdmin, setIsAdmin ] = state.userApi.isAdmin
+    const [ cart ] = state.userApi.cart
 
 
     const logoutUser = async ()=>{
@@ -71,7 +72,7 @@ const header = () => {
 
             {
                 isAdmin ? '' : <div className='flex items-center justify-center gap-2'>
-                <span className='text-xl'>0</span>
+                <span className='text-xl'>{cart.length}</span>
                 <Link href='/cart'><IoCartOutline className='text-2xl' /></Link>
             </div>
             }

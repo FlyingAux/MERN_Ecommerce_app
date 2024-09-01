@@ -10,7 +10,7 @@ export const GlobalState = createContext();
 export const DataProvider = ({ children }) => {
   const [token, setToken] = useState(false); // Corrected `flase` typo to `false`
   const [products, setProducts] = useProductApi();
-  const { isLogged, isAdmin } = userApi(token);
+  const { isLogged, isAdmin, cart, setCart, addCart } = userApi(token);
 
   // Function to refresh the token
   const refreshToken = async () => {
@@ -44,7 +44,7 @@ export const DataProvider = ({ children }) => {
   const state = {
     token: [token, setToken],
     productApi: { products, setProducts },
-    userApi: { isLogged, isAdmin }
+    userApi: { isLogged, isAdmin, cart, setCart, addCart }
     };
 
   return (
@@ -53,5 +53,3 @@ export const DataProvider = ({ children }) => {
     </GlobalState.Provider>
   );
 };
-
-
